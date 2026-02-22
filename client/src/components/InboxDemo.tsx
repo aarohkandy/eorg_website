@@ -18,6 +18,9 @@ const SUBJECTS = [
   "Reminder: Payment due Friday",
   "Team sync notes",
   "Invitation: Design review",
+  "Action required: Confirm your email",
+  "Re: Budget approval",
+  "Your receipt from Stripe",
 ];
 
 const PREVIEWS = [
@@ -28,6 +31,9 @@ const PREVIEWS = [
   "This is a friendly reminder that your invoice…",
   "Summary of action items and next steps…",
   "You're invited to join the design review call…",
+  "Please verify your email address to continue…",
+  "The finance team has approved the Q3 budget…",
+  "A payment of $49.00 was processed on…",
 ];
 
 interface EmailItem {
@@ -48,9 +54,15 @@ function randomPair() {
   return { subject: SUBJECTS[i], preview: PREVIEWS[j] };
 }
 
+// Returns a random delay between min and max milliseconds
+function randMs(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export default function InboxDemo() {
   const [emails, setEmails] = useState<EmailItem[]>([]);
   const nextId = useRef(0);
+  const loopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const addEmail = useCallback(() => {
     const id = nextId.current++;
@@ -62,30 +74,33 @@ export default function InboxDemo() {
       ...prev.slice(0, 4),
     ]);
 
+    // Label appears after a short, slightly randomized delay
     setTimeout(() => {
       setEmails((prev) =>
         prev.map((e) => (e.id === id ? { ...e, labeled: true } : e))
       );
-    }, 1200);
+    }, randMs(900, 1400));
   }, []);
 
-  useEffect(() => {
-    addEmail();
-    addEmail();
-  }, []);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(addEmail, 2000),
-      setTimeout(addEmail, 4200),
-      setTimeout(addEmail, 6400),
-    ];
-    const loop = setInterval(addEmail, 9000);
-    return () => {
-      timers.forEach(clearTimeout);
-      clearInterval(loop);
-    };
+  // Schedule the next email with a random delay, then recurse
+  const scheduleNext = useCallback(() => {
+    const delay = randMs(1800, 3800);
+    loopRef.current = setTimeout(() => {
+      addEmail();
+      scheduleNext();
+    }, delay);
   }, [addEmail]);
+
+  // Seed 3 emails immediately on mount, then start the randomized loop
+  useEffect(() => {
+    addEmail();
+    setTimeout(addEmail, randMs(300, 700));
+    setTimeout(addEmail, randMs(900, 1400));
+    scheduleNext();
+    return () => {
+      if (loopRef.current) clearTimeout(loopRef.current);
+    };
+  }, []);
 
   const labelMap = Object.fromEntries(LABELS.map((l) => [l.id, l]));
 
