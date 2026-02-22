@@ -21,6 +21,8 @@ const SUBJECTS = [
   "Action required: Confirm your email",
   "Re: Budget approval",
   "Your receipt from Stripe",
+  "Heads up: server maintenance tonight",
+  "Quarterly report attached",
 ];
 
 const PREVIEWS = [
@@ -34,6 +36,8 @@ const PREVIEWS = [
   "Please verify your email address to continue…",
   "The finance team has approved the Q3 budget…",
   "A payment of $49.00 was processed on…",
+  "We'll be performing scheduled maintenance…",
+  "Please find the Q3 report attached for review…",
 ];
 
 interface EmailItem {
@@ -54,15 +58,18 @@ function randomPair() {
   return { subject: SUBJECTS[i], preview: PREVIEWS[j] };
 }
 
-// Returns a random delay between min and max milliseconds
 function randMs(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+// Keep at most this many emails in state (more than visible so scroll works)
+const MAX_EMAILS = 20;
 
 export default function InboxDemo() {
   const [emails, setEmails] = useState<EmailItem[]>([]);
   const nextId = useRef(0);
   const loopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const addEmail = useCallback(() => {
     const id = nextId.current++;
@@ -71,10 +78,14 @@ export default function InboxDemo() {
 
     setEmails((prev) => [
       { id, subject, preview, label, labeled: false },
-      ...prev.slice(0, 4),
+      ...prev.slice(0, MAX_EMAILS - 1),
     ]);
 
-    // Label appears after a short, slightly randomized delay
+    // Scroll to top so the new email is visible
+    if (listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+
     setTimeout(() => {
       setEmails((prev) =>
         prev.map((e) => (e.id === id ? { ...e, labeled: true } : e))
@@ -82,7 +93,6 @@ export default function InboxDemo() {
     }, randMs(900, 1400));
   }, []);
 
-  // Schedule the next email with a random delay, then recurse
   const scheduleNext = useCallback(() => {
     const delay = randMs(1800, 3800);
     loopRef.current = setTimeout(() => {
@@ -91,11 +101,13 @@ export default function InboxDemo() {
     }, delay);
   }, [addEmail]);
 
-  // Seed 3 emails immediately on mount, then start the randomized loop
   useEffect(() => {
-    addEmail();
-    setTimeout(addEmail, randMs(300, 700));
-    setTimeout(addEmail, randMs(900, 1400));
+    // Seed 5 pre-labeled emails so the inbox looks full immediately
+    const seed: EmailItem[] = Array.from({ length: 5 }, (_, i) => {
+      const { subject, preview } = randomPair();
+      return { id: nextId.current++, subject, preview, label: randomLabel(), labeled: true };
+    });
+    setEmails(seed);
     scheduleNext();
     return () => {
       if (loopRef.current) clearTimeout(loopRef.current);
@@ -105,26 +117,29 @@ export default function InboxDemo() {
   const labelMap = Object.fromEntries(LABELS.map((l) => [l.id, l]));
 
   return (
-    <div className="inbox-card w-full max-w-[300px] flex flex-col overflow-hidden">
+    <div className="inbox-card w-full max-w-[320px] flex flex-col" style={{ height: 380 }}>
       {/* Header */}
-      <div className="px-3 py-2.5 border-b border-border flex items-center gap-2">
+      <div className="px-3 py-2.5 border-b border-border flex items-center gap-2 shrink-0">
         <Inbox className="w-4 h-4 text-muted-foreground" />
         <span className="text-sm font-medium">Inbox</span>
-        <span className="ml-auto text-xs text-muted-foreground">{emails.length}</span>
       </div>
 
-      {/* Email list */}
-      <div className="p-2 space-y-1.5 min-h-[220px] max-h-[320px] overflow-hidden">
-        <AnimatePresence mode="popLayout">
+      {/* Scrollable email list — fixed height, overflows naturally */}
+      <div
+        ref={listRef}
+        className="flex-1 overflow-y-auto p-2 space-y-1.5"
+        style={{ scrollBehavior: "smooth" }}
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
           {emails.map((email) => (
             <motion.div
               key={email.id}
               layout
-              initial={{ opacity: 0, y: -8 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="rounded-md border border-border bg-card p-2.5"
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="rounded-md border border-border bg-card p-2.5 shrink-0"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">

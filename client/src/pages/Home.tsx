@@ -2,6 +2,8 @@ import { Moon, Sun } from "lucide-react";
 import InboxDemo from "@/components/InboxDemo";
 import { useTheme } from "@/contexts/ThemeContext";
 
+// TODO: replace with Chrome Web Store URL when extension is published
+const CTA_URL = "https://github.com/aarohkandy/eorg";
 const GITHUB_URL = "https://github.com/aarohkandy/eorg";
 
 export default function Home() {
@@ -48,30 +50,22 @@ export default function Home() {
                 Your inbox,<br />sorted automatically.
               </h1>
               <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-md">
-                Mailita connects to Gmail and uses your own AI key to label and organise every email as it arrives. Pay pennies, not subscriptions.
+                Mailita connects to Gmail and uses your own AI key to label and organise every email as it arrives. Works with Groq and OpenRouter — completely free.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 fade-up fade-up-delay-1">
+              <div className="fade-up fade-up-delay-1">
                 <a
-                  href={GITHUB_URL}
+                  href={CTA_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center h-12 px-7 rounded-md bg-foreground text-background text-base font-medium hover:opacity-85 transition-opacity"
                 >
                   Add to Chrome
                 </a>
-                <a
-                  href={GITHUB_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center h-12 px-7 rounded-md border border-border text-base font-medium hover:bg-secondary transition-colors"
-                >
-                  View source
-                </a>
               </div>
 
               <p className="mt-5 text-sm text-muted-foreground fade-up fade-up-delay-2">
-                Free to use · Your data never leaves your browser
+                Your data never leaves your browser · No subscription
               </p>
             </div>
 
@@ -97,7 +91,7 @@ export default function Home() {
               {
                 step: "2",
                 title: "Connect your AI key",
-                body: "Paste in your OpenAI or Gemini API key. Mailita calls the model directly — no middleman.",
+                body: "Paste in an API key from OpenAI, Groq, or OpenRouter. Mailita calls the model directly — no middleman, no cost.",
               },
               {
                 step: "3",
@@ -120,9 +114,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-border py-6">
         <div className="container flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="text-sm text-muted-foreground">
-            Mailita
-          </span>
+          <span className="text-sm text-muted-foreground">Mailita</span>
           <div className="flex items-center gap-5">
             <a
               href={GITHUB_URL}
