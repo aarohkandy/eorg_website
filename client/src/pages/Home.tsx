@@ -4,7 +4,6 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 // TODO: replace with Chrome Web Store URL when extension is published
 const CTA_URL = "https://github.com/aarohkandy/eorg";
-const GITHUB_URL = "https://github.com/aarohkandy/eorg";
 
 export default function Home() {
   const { theme, setTheme } = useTheme();
@@ -16,27 +15,17 @@ export default function Home() {
         <div className="container flex items-center justify-between h-14">
           <span className="text-base font-semibold tracking-tight">Mailita</span>
 
-          <div className="flex items-center gap-6">
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              GitHub
-            </a>
-            <button
-              onClick={() => setTheme?.(theme === "dark" ? "light" : "dark")}
-              className="w-8 h-8 flex items-center justify-center rounded-md border border-border hover:bg-secondary transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <Sun size={15} className="text-foreground" />
-              ) : (
-                <Moon size={15} className="text-foreground" />
-              )}
-            </button>
-          </div>
+          <button
+            onClick={() => setTheme?.(theme === "dark" ? "light" : "dark")}
+            className="w-8 h-8 flex items-center justify-center rounded-md border border-border hover:bg-secondary transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <Sun size={15} className="text-foreground" />
+            ) : (
+              <Moon size={15} className="text-foreground" />
+            )}
+          </button>
         </div>
       </nav>
 
@@ -50,7 +39,7 @@ export default function Home() {
                 Your inbox,<br />sorted automatically.
               </h1>
               <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-md">
-                Mailita connects to Gmail and uses your own AI key to label and organise every email as it arrives. Works with Groq and OpenRouter — completely free.
+                Mailita connects to Gmail and uses your own AI key to label and organise every email as it arrives. Use Groq, OpenRouter, or run it locally with Ollama — free to start.
               </p>
 
               <div className="fade-up fade-up-delay-1">
@@ -63,10 +52,6 @@ export default function Home() {
                   Add to Chrome
                 </a>
               </div>
-
-              <p className="mt-5 text-sm text-muted-foreground fade-up fade-up-delay-2">
-                Your data never leaves your browser · No subscription
-              </p>
             </div>
 
             {/* Right: live demo */}
@@ -90,8 +75,8 @@ export default function Home() {
               },
               {
                 step: "2",
-                title: "Connect your AI key",
-                body: "Paste in an API key from OpenAI, Groq, or OpenRouter. Mailita calls the model directly — no middleman, no cost.",
+                title: "Connect your AI",
+                body: "Use an API key from Groq or OpenRouter, or run a local model with Ollama. Mailita calls the model directly — no middleman.",
               },
               {
                 step: "3",
@@ -113,26 +98,8 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-border py-6">
-        <div className="container flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="container flex items-center justify-center">
           <span className="text-sm text-muted-foreground">Mailita</span>
-          <div className="flex items-center gap-5">
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              GitHub
-            </a>
-            <a
-              href={`${GITHUB_URL}/blob/main/LICENSE`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              MIT Licence
-            </a>
-          </div>
         </div>
       </footer>
     </div>
