@@ -131,6 +131,11 @@
     box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.4);
   }
 
+  /* Hide scrollbar cross-browser */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Fade-in for page load */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }

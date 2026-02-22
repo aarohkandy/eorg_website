@@ -127,8 +127,8 @@ export default function InboxDemo() {
       {/* Scrollable email list — fixed height, overflows naturally */}
       <div
         ref={listRef}
-        className="flex-1 overflow-y-auto p-2 space-y-1.5"
-        style={{ scrollBehavior: "smooth" }}
+        className="flex-1 overflow-y-auto no-scrollbar p-2 space-y-1.5"
+        style={{ scrollBehavior: "smooth", scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <AnimatePresence mode="popLayout" initial={false}>
           {emails.map((email) => (
